@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Travels with Charley 横越美国 — 旅行路线图</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <!-- Header Bar -->
+  <header id="header">
+    <div class="header-content">
+      <h1>Travels with Charley <span class="subtitle">横越美国</span></h1>
+      <p class="header-meta">
+        <span>约翰·斯坦贝克 John Steinbeck</span>
+        <span class="sep">|</span>
+        <span>1960年秋 — 冬</span>
+        <span class="sep">|</span>
+        <span>~10,000 英里</span>
+      </p>
+    </div>
+    <div class="header-actions">
+      <div class="theme-buttons" id="theme-buttons">
+        <button class="theme-btn" data-theme-id="mobile-home" title="活动房屋">
+          <span class="theme-icon">🚐</span>
+          <span class="theme-label">活动房屋</span>
+        </button>
+        <button class="theme-btn" data-theme-id="rocinante" title="驽骍难得">
+          <span class="theme-icon">🚚</span>
+          <span class="theme-label">驽骍难得</span>
+        </button>
+        <button class="theme-btn" data-theme-id="fall-foliage" title="秋叶">
+          <span class="theme-icon">🍁</span>
+          <span class="theme-label">秋叶</span>
+        </button>
+        <button class="theme-btn" data-theme-id="rivers" title="河流">
+          <span class="theme-icon">🌊</span>
+          <span class="theme-label">河流</span>
+        </button>
+        <button class="theme-btn" data-theme-id="homeland" title="家乡">
+          <span class="theme-icon">🏡</span>
+          <span class="theme-label">家乡</span>
+        </button>
+        <button class="theme-btn" data-theme-id="wayhouse" title="驿站">
+          <span class="theme-icon">🍺</span>
+          <span class="theme-label">驿站</span>
+        </button>
+        <button class="theme-btn" data-theme-id="segregation" title="种族隔离">
+          <span class="theme-icon">🏫</span>
+          <span class="theme-label">种族隔离</span>
+        </button>
+      </div>
+      <div class="header-sep"></div>
+      <button id="hero-toggle" class="panel-toggle-btn" title="查看斯坦贝克/Charley/Rocinante 照片">
+        <span>🧭 主角</span>
+      </button>
+      <button id="panel-toggle" class="panel-toggle-btn" title="打开/关闭导览面板">
+        <span class="toggle-icon">☰</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Theme Modal (overlay) -->
+  <div id="theme-modal" class="theme-modal" style="display:none">
+    <div class="theme-modal-backdrop"></div>
+    <div class="theme-modal-content">
+      <button class="theme-close" id="theme-close">✕</button>
+      <div id="theme-modal-body"></div>
+    </div>
+  </div>
+
+  <!-- Hero Modal (overlay) -->
+  <div id="hero-modal" class="hero-modal" style="display:none">
+    <div class="hero-modal-backdrop"></div>
+    <div class="hero-modal-content">
+      <button class="hero-close" id="hero-close">✕</button>
+      <h2>本书三位主角 The Three Protagonists</h2>
+      <div class="hero-cards" id="hero-cards"></div>
+    </div>
+  </div>
+
+  <!-- Map (full width) -->
+  <div id="map"></div>
+
+  <!-- Right Side Panel (floating) -->
+  <aside id="side-panel" class="side-panel open">
+    <!-- Panel Tabs -->
+    <div class="panel-tabs">
+      <button class="tab-btn active" data-tab="toc">目录 TOC</button>
+      <button class="tab-btn" data-tab="detail">详情 Detail</button>
+      <button class="tab-btn" data-tab="timeline">时间线</button>
+    </div>
+
+    <!-- TOC Tab -->
+    <div class="tab-content active" id="tab-toc">
+      <div class="toc-filters">
+        <select id="tag-filter">
+          <option value="">全部站点 All Stops</option>
+        </select>
+      </div>
+      <div id="toc-list" class="toc-list"></div>
+    </div>
+
+    <!-- Detail Tab -->
+    <div class="tab-content" id="tab-detail">
+      <div id="detail-placeholder" class="detail-placeholder">
+        <p>👈 点击地图上的站点标记<br>或从目录中选择一个站点</p>
+        <p class="hint-en">Click a marker on the map<br>or select a stop from the TOC</p>
+      </div>
+      <div id="detail-card" class="detail-card" style="display:none">
+        <div class="card-header">
+          <span class="card-part-badge" id="card-part"></span>
+          <span class="card-mood" id="card-mood"></span>
+        </div>
+        <h2 id="card-name"></h2>
+        <p class="card-time" id="card-time"></p>
+        <div class="card-image-links" id="card-image-links"></div>
+        <div class="card-summary" id="card-summary"></div>
+        <blockquote class="card-quote">
+          <p id="card-quote-en"></p>
+          <p class="quote-cn" id="card-quote-cn"></p>
+        </blockquote>
+        <div class="card-tags" id="card-tags"></div>
+        <div class="card-nav">
+          <button id="btn-prev" class="nav-btn">← 上一站</button>
+          <span id="card-counter" class="card-counter"></span>
+          <button id="btn-next" class="nav-btn">下一站 →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Timeline Tab -->
+    <div class="tab-content" id="tab-timeline">
+      <div id="timeline" class="timeline"></div>
+    </div>
+  </aside>
+
+  <!-- Play Journey Button -->
+  <div id="play-controls" class="play-controls">
+    <button id="btn-play" class="play-btn" title="播放旅程 Play Journey">▶ 播放旅程</button>
+  </div>
+
+  <!-- Legend -->
+  <div id="legend" class="legend">
+    <div class="legend-title">旅程分段 Journey Parts</div>
+    <div class="legend-item"><span class="legend-color" style="background:#2E86AB"></span>Part 1 出发准备</div>
+    <div class="legend-item"><span class="legend-color" style="background:#A23B72"></span>Part 2 新英格兰→中西部</div>
+    <div class="legend-item"><span class="legend-color" style="background:#F18F01"></span>Part 3 西部与太平洋</div>
+    <div class="legend-item"><span class="legend-color" style="background:#C73E1D"></span>Part 4 德州·深南·归途</div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="js/route-data.js"></script>
+  <script src="js/stop-image-queries.js"></script>
+  <script src="js/themes-data.js"></script>
+  <script src="js/map.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

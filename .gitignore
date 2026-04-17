@@ -1,0 +1,19 @@
+# macOS
+.DS_Store
+
+# Claude settings
+.claude/
+
+# Python artifacts
+*.py
+__pycache__/
+.venv/
+venv/
+
+# Env
+.env
+.env.local
+
+# Node (for wrangler)
+node_modules/
+.wrangler/

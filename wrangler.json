@@ -1,0 +1,8 @@
+{
+  "name": "travels-with-charley",
+  "compatibility_date": "2026-04-17",
+  "assets": {
+    "directory": "./public",
+    "not_found_handling": "single-page-application"
+  }
+}
